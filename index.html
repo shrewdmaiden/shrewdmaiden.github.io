@@ -71,14 +71,11 @@
 		//This function randomly shuffles items in an array. This way the answer won't always be on the same button.
 		function shuffle(array) {
 			var currentIndex = array.length, temporaryValue, randomIndex;
-
 			// While there remain elements to shuffle...
 			while (0 !== currentIndex) {
-
 			// Pick a remaining element...
 			randomIndex = Math.floor(Math.random() * currentIndex);
 			currentIndex -= 1;
-
 			// And swap it with the current element.
 			temporaryValue = array[currentIndex];
 			array[currentIndex] = array[randomIndex];
@@ -88,7 +85,6 @@
 		
 		//Button Object
 		(function() {
-
 		function Button(label, color) {
 			this.Container_constructor();
 			
@@ -98,8 +94,6 @@
 			this.setup();
 		}
 		var p = createjs.extend(Button, createjs.Container);
-
-
 		p.setup = function() {
 			this.txt = new createjs.Text(this.label, "20px Arial", "#000");
 			this.txt.textBaseline = "top";
@@ -119,14 +113,11 @@
 			this.on("rollover", this.handleRollOver);
 			this.on("rollout", this.handleRollOver);
 			this.cursor = "pointer";
-
 			this.mouseChildren = false;
 			
 			this.offset = Math.random()*10;
 			this.count = 0;
-
 		};
-
 		p.handleClick = function (event) {
 			display_time = createjs.Ticker.getTime(true) + 1500;
 			
@@ -144,7 +135,6 @@
 			
 			}
 		};
-
 		p.handleRollOver = function(event) {       
 			this.alpha = event.type == "rollover" ? 0.4 : 1;
 		};
@@ -155,7 +145,6 @@
 		
 		//Strang Object. Couldn't call in String, 'cause that was already a thing. 
 		(function() {
-
 		function Strang(startx,starty,endx,endy,str_name) {
 			this.Container_constructor();
 			this.startx = startx;
@@ -164,13 +153,10 @@
 			this.endy = endy;
 			this.str_name = str_name;
 			this.color = "white";
-
 			
 			this.setup();
 		}
 		var p = createjs.extend(Strang, createjs.Container);
-
-
 		p.setup = function() {
 			g = new createjs.Graphics();
 			g.setStrokeStyle(1);
@@ -187,19 +173,14 @@
 			this.on("rollover", this.handleRollOver);
 			this.on("rollout", this.handleRollOver);
 			this.cursor = "pointer";
-
 			this.mouseChildren = false;
 			
 			this.offset = Math.random()*10;
 			this.count = 0;
-
 		};
-
 		p.handleClick = function (event) {
 			none
-
 		};
-
 		p.handleRollOver = function(event) {       
 			this.alpha = event.type == "rollover" ? 0.4 : 1;
 		};
@@ -210,7 +191,6 @@
 	
 		//Fret Object
 		(function() {
-
 		function Fret(startx,starty,endx,endy,frt_name) {
 			this.Container_constructor();
 			this.startx = startx;
@@ -219,13 +199,10 @@
 			this.endy = endy;
 			this.frt_name = frt_name;
 			this.color = "white";
-
 			
 			this.setup();
 		}
 		var p = createjs.extend(Fret, createjs.Container);
-
-
 		p.setup = function() {
 			g = new createjs.Graphics();
 			g.setStrokeStyle(1);
@@ -242,19 +219,14 @@
 			this.on("rollover", this.handleRollOver);
 			this.on("rollout", this.handleRollOver);
 			this.cursor = "pointer";
-
 			this.mouseChildren = false;
 			
 			this.offset = Math.random()*10;
 			this.count = 0;
-
 		};
-
 		p.handleClick = function (event) {
 			none
-
 		};
-
 		p.handleRollOver = function(event) {       
 			this.alpha = event.type == "rollover" ? 0.4 : 1;
 		};
@@ -281,7 +253,6 @@
 			return [stringchoice, fretchoice, answer, choices];
 		};
 		
-
 		function choose_answer() {
 			button1.mouseEnabled = true;
 			button2.mouseEnabled = true;
@@ -306,19 +277,15 @@
 				fret_lst[f] = new Fret(x[0],x[1],x[2],x[3],frets[f]);
 				stage.addChild(fret_lst[f]);
 			}
-
-
 			for (s = 0; s < 6; s++) {
 				x = string_pos[strings[s]];
 				string_lst[s] = new Strang(x[0],x[1],x[2],x[3],strings[s]);
 				stage.addChild(string_lst[s]);
 			}
-
 			button1 = new Button(choices[0],"#E9D3AE");
 			button1.x = 300;
 			button1.y = 200;
 			stage.addChild(button1);
-
 			button2 = new Button(choices[1],"#E9D3AE");
 			button2.x = 300;
 			button2.y = 250;
@@ -333,7 +300,6 @@
 			button4.x = 300;
 			button4.y = 350;
 			stage.addChild(button4);			
-
 			response = new createjs.Text("", "20px Arial", "#000");
 			response.x = 335;
 			response.y = 120;
@@ -345,7 +311,6 @@
 			createjs.Ticker.addEventListener("tick", tick);
 		}
 		
-
 		function tick() {
 			for (i = 0; i < stage.children.length; i++) {
 				if (stage.children[i].constructor.name === "Strang") {
