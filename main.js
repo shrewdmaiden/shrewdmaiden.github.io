@@ -94,7 +94,7 @@ var p = createjs.extend(Button, createjs.Container);
 
 
 p.setup = function() {
-	this.txt = new createjs.Text(this.label, "20px Arial", "#000");
+	this.txt = new createjs.Text(this.label, "20px Arial", "#000000");
 	this.txt.textBaseline = "top";
 	this.txt.textAlign = "center";
 	
@@ -156,7 +156,7 @@ function Strang(startx,starty,endx,endy,str_name) {
 	this.endx = endx;
 	this.endy = endy;
 	this.str_name = str_name;
-	this.color = "white";
+	this.color = "#ffffff";
 
 			
 	this.setup();
@@ -211,7 +211,7 @@ function Fret(startx,starty,endx,endy,frt_name) {
 	this.endx = endx;
 	this.endy = endy;
 	this.frt_name = frt_name;
-	this.color = "white";
+	this.color = "#ffffff";
 
 			
 	this.setup();
@@ -324,7 +324,7 @@ function init() {
 	button4.y = 350;
 	stage.addChild(button4);			
 
-	response = new createjs.Text("", "20px Arial", "#000");
+	response = new createjs.Text("", "20px Arial", "#00000");
 	response.x = 335;
 	response.y = 120;
 	response.lineWidth = 150;
@@ -339,23 +339,23 @@ function init() {
 function tick() {
 	for (i = 0; i < stage.children.length; i++) {
 		if (stage.children[i].constructor.name === "Strang") {
-			stage.children[i].children[0].graphics._stroke.style = "white";
+			stage.children[i].children[0].graphics._stroke.style = "#ffffff";
 			if (stage.children[i].str_name === answer_set[0]) {
-				stage.children[i].children[0].graphics._stroke.style = "red";
+				stage.children[i].children[0].graphics._stroke.style = "#ff0000";
 			}
 		}
 		else if (stage.children[i].constructor.name === "Fret") {
 			if (stage.children[i].frt_name === answer_set[1]) {
-				stage.children[i].children[0].graphics._stroke.style = "red";
+				stage.children[i].children[0].graphics._stroke.style = "#ff0000";
 				if (stage.children[i].frt_name === 0) {
-					stage.children[i].children[0].graphics._stroke.style = "black";
+					stage.children[i].children[0].graphics._stroke.style = "#000000";
 				}
 			}
 			else if (stage.children[i].frt_name === 0) {
-				stage.children[i].children[0].graphics._stroke.style = "black";
+				stage.children[i].children[0].graphics._stroke.style = "#000000";
 			}
 			else {
-				stage.children[i].children[0].graphics._stroke.style = "white";
+				stage.children[i].children[0].graphics._stroke.style = "#ffffff";
 			}
 		
 		}
