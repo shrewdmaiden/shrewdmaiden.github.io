@@ -84,7 +84,7 @@ function shuffle(array) {
 
 function Button(label, color) {
 	this.Container_constructor();
-		
+	this.title = "Button";	
 	this.color = color;
 	this.label = label;
 			
@@ -157,6 +157,7 @@ function Strang(startx,starty,endx,endy,str_name) {
 	this.endy = endy;
 	this.str_name = str_name;
 	this.color = "#ffffff";
+	this.title = "Strang";
 
 			
 	this.setup();
@@ -212,6 +213,7 @@ function Fret(startx,starty,endx,endy,frt_name) {
 	this.endy = endy;
 	this.frt_name = frt_name;
 	this.color = "#ffffff";
+	this.title = "Fret";
 
 			
 	this.setup();
@@ -338,13 +340,13 @@ function init() {
 
 function tick() {
 	for (i = 0; i < stage.children.length; i++) {
-		if (stage.children[i].constructor.name === "Strang") {
+		if (stage.children[i].title === "Strang") {
 			stage.children[i].children[0].graphics._stroke.style = "#ffffff";
 			if (stage.children[i].str_name === answer_set[0]) {
 				stage.children[i].children[0].graphics._stroke.style = "#ff0000";
 			}
 		}
-		else if (stage.children[i].constructor.name === "Fret") {
+		else if (stage.children[i].title === "Fret") {
 			if (stage.children[i].frt_name === answer_set[1]) {
 				stage.children[i].children[0].graphics._stroke.style = "#ff0000";
 				if (stage.children[i].frt_name === 0) {
