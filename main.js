@@ -29,6 +29,17 @@ var button3;
 var button4;
 var response;
 var display_time;
+var display_note;
+var hotspots = [];
+var combos = [];
+var hotspot_pos = [[96,172],[97,193],[97,214],[98,235],[99,256],[99,277],[100,298],[100,319],
+				[91,172],[91,193],[91,214],[92,235],[93,256],[93,277],[93,298],[93,319],
+				[85,172],[85,193],[85,214],[85,235],[86,256],[86,277],[86,298],[86,319],
+				[79,172],[79,193],[79,214],[78,235],[78,256],[78,277],[78,298],[78,319],
+				[73,172],[72,193],[72,214],[71,235],[71,256],[71,277],[70,298],[70,319],
+				[66,172],[65,193],[65,214],[64,235],[63,256],[63,277],[62,298],[62,319]];
+
+
 		
 //This loop puts all of the string and fret combinations in an array along with their note name.
 for (string = 0; string < strings.length; string++) {
@@ -78,13 +89,83 @@ function shuffle(array) {
 	array[randomIndex] = temporaryValue;
 	}
 }
+
+//Hotspot Object
+(function() {
+
+function Hotspot(str,frt,x,y) {
+	this.Container_constructor();
+	this.title = "Hotspot";
+	this.str = str;
+	this.frt = frt;
+	this.color = "red";
+	this.x = x;
+	this.y = y;
+	this.note = notes[[this.str.str_name,this.frt.frt_name]];
+			
+	this.setup();
+}
+var p = createjs.extend(Hotspot, createjs.Container);
+
+
+p.setup = function() {
+
+	var width = 5;
+	var height = 5;
+	this.alpha = .04;
+		
+			
+	var background = new createjs.Shape();
+	background.graphics.beginFill(this.color).drawRect(0,0,width,height);
+			
+	this.addChild(background); 
+	//this.on("click", this.handleClick);
+	this.on("rollover", this.handleRollOver);
+	this.on("rollout", this.handleRollOver);
+	this.cursor = "pointer";
+
+	this.mouseChildren = false;
+			
+	this.offset = Math.random()*10;
+	this.count = 0;
+
+};
+
+/*p.handleClick = function (event) {
+	display_time = createjs.Ticker.getTime(true) + 1500;
+		
+	if (this.txt.text === answer_set[2]) {
+		response.text = "Correct";
+		choose_answer();
+	}
+	else {
+		button1.mouseEnabled = false;
+		button2.mouseEnabled = false;
+		button3.mouseEnabled = false;
+		button4.mouseEnabled = false;
+	    response.text = "The correct answer is " + answer_set[2] + ".";
+		setTimeout(choose_answer,1500);
+	
+	}
+};*/
+
+p.handleRollOver = function(event) {       
+	this.str.alpha = event.type == "rollover" ? .4 : 1;
+	this.frt.alpha = event.type == "rollover" ? .4 : 1;
+	display_note.text = event.type == "rollover" ? this.note : "";
+};
+		
+		
+window.Hotspot = createjs.promote(Hotspot, "Container");
+}());
 		
 //Button Object
 (function() {
 
 function Button(label, color) {
 	this.Container_constructor();
-	this.title = "Button";	
+	this.title = "Button";
+		
 	this.color = color;
 	this.label = label;
 			
@@ -94,7 +175,7 @@ var p = createjs.extend(Button, createjs.Container);
 
 
 p.setup = function() {
-	this.txt = new createjs.Text(this.label, "20px Arial", "#000000");
+	this.txt = new createjs.Text(this.label, "20px Arial", "#000");
 	this.txt.textBaseline = "top";
 	this.txt.textAlign = "center";
 	
@@ -156,7 +237,7 @@ function Strang(startx,starty,endx,endy,str_name) {
 	this.endx = endx;
 	this.endy = endy;
 	this.str_name = str_name;
-	this.color = "#ffffff";
+	this.color = "white";
 	this.title = "Strang";
 
 			
@@ -196,6 +277,7 @@ p.handleClick = function (event) {
 
 p.handleRollOver = function(event) {       
 	this.alpha = event.type == "rollover" ? 0.4 : 1;
+	display_note.text = event.type == "rollover" ? this.str_name.substring(0,1) + " string" : "";
 };
 		
 		
@@ -212,7 +294,7 @@ function Fret(startx,starty,endx,endy,frt_name) {
 	this.endx = endx;
 	this.endy = endy;
 	this.frt_name = frt_name;
-	this.color = "#ffffff";
+	this.color = "white";
 	this.title = "Fret";
 
 			
@@ -234,8 +316,8 @@ p.setup = function() {
 			
 	this.addChild(s); 
 	this.on("click", this.handleClick);
-	this.on("rollover", this.handleRollOver);
-	this.on("rollout", this.handleRollOver);
+	//this.on("rollover", this.handleRollOver);
+	//this.on("rollout", this.handleRollOver);
 	this.cursor = "pointer";
 
 	this.mouseChildren = false;
@@ -249,9 +331,10 @@ p.handleClick = function (event) {
 	none
 };
 
-p.handleRollOver = function(event) {       
+/*p.handleRollOver = function(event) {       
 	this.alpha = event.type == "rollover" ? 0.4 : 1;
-};
+	
+};*/
 		
 		
 window.Fret = createjs.promote(Fret, "Container");
@@ -278,18 +361,22 @@ function pick_answer () {
 
 function choose_answer() {
 	button1.mouseEnabled = true;
+	button1.alpha = 1;
 	button2.mouseEnabled = true;
+	button2.alpha = 1;
 	button3.mouseEnabled = true;
+	button3.alpha = 1;
 	button4.mouseEnabled = true;
+	button4.alpha = 1;
 	answer_set = pick_answer();
 }
 		
 function init() {
 	stage = new createjs.Stage(document.getElementById("canvas"));
-		
+	stage.enableMouseOver();	
 	answer_set = pick_answer();
-			
-			
+
+		
 	pic = new createjs.Bitmap("Violcropped.png");
 	pic.regX = pic.image.width * 0.5;
 	pic.regY = pic.image.height * 0.5;
@@ -307,10 +394,21 @@ function init() {
 		stage.addChild(string_lst[s]);
 	}
 
+	for (string = 0; string < string_lst.length; string++) {
+		for (fret = 0; fret < fret_lst.length; fret++) {
+			combos.push([string_lst[string],fret_lst[fret]]);
+		}
+	}
+	for (h = 0; h < combos.length; h++) {
+		hotspots[h] = new Hotspot(combos[h][0],combos[h][1],hotspot_pos[h][0],hotspot_pos[h][1]);
+		stage.addChild(hotspots[h]);
+	}
+	
 	button1 = new Button(choices[0],"#E9D3AE");
 	button1.x = 300;
 	button1.y = 200;
 	stage.addChild(button1);
+	
 	button2 = new Button(choices[1],"#E9D3AE");
 	button2.x = 300;
 	button2.y = 250;
@@ -326,41 +424,80 @@ function init() {
 	button4.y = 350;
 	stage.addChild(button4);			
 
-	response = new createjs.Text("", "20px Arial", "#00000");
+	response = new createjs.Text("", "20px Arial", "#000");
 	response.x = 335;
 	response.y = 120;
 	response.lineWidth = 150;
 	response.textAlign = "center";
 	stage.addChild(response);
 		
+	display_note = new createjs.Text("", "20px Arial", "#000");
+	display_note.x = 200;
+	display_note.y = 10;
+	stage.addChild(display_note);
+	
 	createjs.Ticker.setFPS(60);
 	createjs.Ticker.addEventListener("tick", tick);
 }
 		
 
 function tick() {
-	for (i = 0; i < stage.children.length; i++) {
-		if (stage.children[i].title === "Strang") {
-			stage.children[i].children[0].graphics._stroke.style = "#ffffff";
-			if (stage.children[i].str_name === answer_set[0]) {
-				stage.children[i].children[0].graphics._stroke.style = "#ff0000";
-			}
-		}
-		else if (stage.children[i].title === "Fret") {
-			if (stage.children[i].frt_name === answer_set[1]) {
-				stage.children[i].children[0].graphics._stroke.style = "#ff0000";
-				if (stage.children[i].frt_name === 0) {
-					stage.children[i].children[0].graphics._stroke.style = "#000000";
+
+	if(document.getElementById('quiz').checked) {
+		for (i = 0; i < stage.children.length; i++) {
+			if (stage.children[i].title === "Strang") {
+				stage.children[i].children[0].graphics._stroke.style = "white";
+				if (stage.children[i].str_name === answer_set[0]) {
+					stage.children[i].children[0].graphics._stroke.style = "red";
 				}
 			}
-			else if (stage.children[i].frt_name === 0) {
-				stage.children[i].children[0].graphics._stroke.style = "#000000";
+			else if (stage.children[i].title === "Fret") {
+				if (stage.children[i].frt_name === answer_set[1]) {
+					stage.children[i].children[0].graphics._stroke.style = "red";
+					if (stage.children[i].frt_name === 0) {
+						stage.children[i].children[0].graphics._stroke.style = "black";
+					}
+				}
+				else if (stage.children[i].frt_name === 0) {
+					stage.children[i].children[0].graphics._stroke.style = "black";
+				}
+				else {
+					stage.children[i].children[0].graphics._stroke.style = "white";
+				}
+			
 			}
-			else {
-				stage.children[i].children[0].graphics._stroke.style = "#ffffff";
+		}
+		for (i = 0; i < stage.children.length; i++) {
+			if (stage.children[i].title === "Strang"||stage.children[i].title === "Fret" || stage.children[i].title === "Hotspot") {
+				stage.children[i].children[0].mouseEnabled = false;
+			}
+		}
+	}
+	else if (document.getElementById('explore').checked) {
+		button1.alpha = .01;
+		button1.mouseEnabled = false;
+		button2.alpha = .01;
+		button2.mouseEnabled = false;
+		button3.alpha = .01;
+		button3.mouseEnabled = false;
+		button4.alpha = .01;
+		button4.mouseEnabled = false;
+		for (i = 0; i < stage.children.length; i++) {
+			if (stage.children[i].title === "Hotspot") {
+				stage.children[i].children[0].mouseEnabled = true;
 			}
 		
+			else if (stage.children[i].title === "Strang" || stage.children[i].title === "Fret")
+				if (stage.children[i].frt_name === 0) {
+					stage.children[i].children[0].graphics._stroke.style = "black";
+					stage.children[i].children[0].mouseEnabled = true;
+				}
+				else {
+					stage.children[i].children[0].graphics._stroke.style = "white";
+					stage.children[i].children[0].mouseEnabled = true;
+				}
 		}
+		
 	}
 			
 	button1.txt.text = choices[0];
