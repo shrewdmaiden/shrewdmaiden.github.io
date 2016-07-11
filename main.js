@@ -5,21 +5,21 @@ var g;
 var strings = ["D1","A","E","C","G","D"];
 var string_lst = [];
 var fret_lst = [];
-var string_pos = {D1: [98,174,113,659],
-                A: [93,174,102,659],
-                E: [87,174,92,659],
-                C: [81,174,78,659],
-                G: [75,174,65,659],
-                D: [68,174,55,659]}; 
+var string_pos = {D1: [503,468,1811,427],
+                A: [503,480,1811,457],
+                E: [503,496,1811,483],
+                C: [503,514,1811,521],
+                G: [503,530,1811,557],
+                D: [503,548,1811,582]}; 
 var frets = [0,1,2,3,4,5,6,7];
-var fret_pos = {0: [63,174,101,174],
-                1: [60,195,106,195],
-                2: [59,216,107,216],
-                3: [58,237,108,237],
-                4: [57,258,109,258],
-                5: [56,279,110,279],
-                6: [56,300,111,300],
-                7: [55,321,112,321]};
+var fret_pos = {0: [504,454,504,568],
+                1: [574,443,574,573],
+                2: [644,439,644,576],
+                3: [714,436,714,579],
+                4: [784,433,784,581],
+                5: [854,430,854,583],
+                6: [924,427,924,586],
+                7: [994,424,994,589]};
 						 
 var notes = [];
 var note_names = ["A","Bb","B","C","C#","D","D#/Eb","E","F","F#","G","G#/Ab"];
@@ -32,12 +32,12 @@ var display_time;
 var display_note;
 var hotspots = [];
 var combos = [];
-var hotspot_pos = [[96,172],[97,193],[97,214],[98,235],[99,256],[99,277],[100,298],[100,319],
-				[91,172],[91,193],[91,214],[92,235],[93,256],[93,277],[93,298],[93,319],
-				[85,172],[85,193],[85,214],[85,235],[86,256],[86,277],[86,298],[86,319],
-				[79,172],[79,193],[79,214],[78,235],[78,256],[78,277],[78,298],[78,319],
-				[73,172],[72,193],[72,214],[71,235],[71,256],[71,277],[70,298],[70,319],
-				[66,172],[65,193],[65,214],[64,235],[63,256],[63,277],[62,298],[62,319]];
+var hotspot_pos = [[502,465],[570,462],[640,460],[710,458],[780,456],[850,454],[920,452],[990,450],
+				[502,477],[570,476],[640,475],[710,473],[780,471],[850,470],[920,469],[990,467],
+				[502,493],[570,492],[640,492],[710,491],[780,490],[850,489],[920,488],[990,488],
+				[502,511],[570,510],[640,511],[710,511],[780,511],[850,514],[920,514],[990,514],
+				[502,527],[570,528],[640,530],[710,530],[780,532],[850,533],[920,535],[990,537],
+				[502,545],[570,546],[640,548],[710,550],[780,551],[850,553],[920,555],[990,557]];
 
 
 		
@@ -110,8 +110,8 @@ var p = createjs.extend(Hotspot, createjs.Container);
 
 p.setup = function() {
 
-	var width = 5;
-	var height = 5;
+	var width = 8;
+	var height = 8;
 	this.alpha = .04;
 		
 			
@@ -175,12 +175,12 @@ var p = createjs.extend(Button, createjs.Container);
 
 
 p.setup = function() {
-	this.txt = new createjs.Text(this.label, "20px Arial", "#000");
+	this.txt = new createjs.Text(this.label, "40px Arial", "#000");
 	this.txt.textBaseline = "top";
 	this.txt.textAlign = "center";
 	
-	var width = 65;
-	var height = this.txt.getMeasuredHeight()+20;
+	var width = 140;
+	var height = this.txt.getMeasuredHeight()+30;
 		
 	this.txt.x = width/2;
 	this.txt.y = 10;
@@ -237,7 +237,7 @@ function Strang(startx,starty,endx,endy,str_name) {
 	this.endx = endx;
 	this.endy = endy;
 	this.str_name = str_name;
-	this.color = "white";
+	this.color = "#F6E5C3";
 	this.title = "Strang";
 
 			
@@ -248,7 +248,7 @@ var p = createjs.extend(Strang, createjs.Container);
 
 p.setup = function() {
 	g = new createjs.Graphics();
-	g.setStrokeStyle(1);
+	g.setStrokeStyle(2);
 	g.beginStroke(this.color);
 	g.moveTo(this.startx,this.starty);
 	g.lineTo(this.endx,this.endy);
@@ -294,7 +294,7 @@ function Fret(startx,starty,endx,endy,frt_name) {
 	this.endx = endx;
 	this.endy = endy;
 	this.frt_name = frt_name;
-	this.color = "white";
+	this.color = "#F6E5C3";
 	this.title = "Fret";
 
 			
@@ -305,7 +305,7 @@ var p = createjs.extend(Fret, createjs.Container);
 
 p.setup = function() {
 	g = new createjs.Graphics();
-	g.setStrokeStyle(1);
+	g.setStrokeStyle(4);
 	g.beginStroke(this.color);
 	g.moveTo(this.startx,this.starty);
 	g.lineTo(this.endx,this.endy);
@@ -377,9 +377,10 @@ function init() {
 	answer_set = pick_answer();
 
 		
-	pic = new createjs.Bitmap("Violcropped.png");
+	pic = new createjs.Bitmap("Violbigside.png");
 	pic.regX = pic.image.width * 0.5;
-	pic.regY = pic.image.height * 0.5;
+	pic.regY = 200;
+	
 	stage.addChild(pic);
 			
 	for (f = 0; f < 8; f++) {
@@ -405,35 +406,35 @@ function init() {
 	}
 	
 	button1 = new Button(choices[0],"#E9D3AE");
-	button1.x = 300;
-	button1.y = 200;
+	button1.x = 510;
+	button1.y = 100;
 	stage.addChild(button1);
 	
 	button2 = new Button(choices[1],"#E9D3AE");
-	button2.x = 300;
-	button2.y = 250;
+	button2.x = 670;
+	button2.y = 100;
 	stage.addChild(button2);
 	
 	button3 = new Button(choices[2],"#E9D3AE");
-	button3.x = 300;
-	button3.y = 300;
+	button3.x = 830;
+	button3.y = 100;
 	stage.addChild(button3);
 			
 	button4 = new Button(choices[3],"#E9D3AE");
-	button4.x = 300;
-	button4.y = 350;
+	button4.x = 990;
+	button4.y = 100;
 	stage.addChild(button4);			
 
-	response = new createjs.Text("", "20px Arial", "#000");
-	response.x = 335;
-	response.y = 120;
-	response.lineWidth = 150;
+	response = new createjs.Text("", "40px Arial", "#000");
+	response.x = 820;
+	response.y = 280;
+	response.lineWidth = 250;
 	response.textAlign = "center";
 	stage.addChild(response);
 		
-	display_note = new createjs.Text("", "20px Arial", "#000");
-	display_note.x = 200;
-	display_note.y = 10;
+	display_note = new createjs.Text("", "40px Arial", "#000");
+	display_note.x = 750;
+	display_note.y = 350;
 	stage.addChild(display_note);
 	
 	createjs.Ticker.setFPS(60);
@@ -446,14 +447,14 @@ function tick() {
 	if(document.getElementById('quiz').checked) {
 		for (i = 0; i < stage.children.length; i++) {
 			if (stage.children[i].title === "Strang") {
-				stage.children[i].children[0].graphics._stroke.style = "white";
+				stage.children[i].children[0].graphics._stroke.style = "#F6E5C3";
 				if (stage.children[i].str_name === answer_set[0]) {
-					stage.children[i].children[0].graphics._stroke.style = "red";
+					stage.children[i].children[0].graphics._stroke.style = "blue";
 				}
 			}
 			else if (stage.children[i].title === "Fret") {
 				if (stage.children[i].frt_name === answer_set[1]) {
-					stage.children[i].children[0].graphics._stroke.style = "red";
+					stage.children[i].children[0].graphics._stroke.style = "blue";
 					if (stage.children[i].frt_name === 0) {
 						stage.children[i].children[0].graphics._stroke.style = "black";
 					}
@@ -462,7 +463,7 @@ function tick() {
 					stage.children[i].children[0].graphics._stroke.style = "black";
 				}
 				else {
-					stage.children[i].children[0].graphics._stroke.style = "white";
+					stage.children[i].children[0].graphics._stroke.style = "#F6E5C3";
 				}
 			
 			}
@@ -493,7 +494,7 @@ function tick() {
 					stage.children[i].children[0].mouseEnabled = true;
 				}
 				else {
-					stage.children[i].children[0].graphics._stroke.style = "white";
+					stage.children[i].children[0].graphics._stroke.style = "#F6E5C3";
 					stage.children[i].children[0].mouseEnabled = true;
 				}
 		}
