@@ -4,13 +4,16 @@
 <head>
 	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 	<script src= "main.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
 </head>
 <body onload="init();">
 	<h1>Learn Bass Viola da Gamba!</h1>
-	<canvas id="canvas" width="437" height="700" ></canvas>
 	<form action="">
-	<input type="radio" name="mode" id = "explore" value="Explore" checked = "checked"> Explore Mode. Hover over the strings and frets to learn note names. <br>
-	<input type="radio" name="mode" id = "quiz" value="Quiz" onClick = "choose_answer()"> Quiz Mode. Choose the correct answer for the highlighted string and fret. <br>
+	<div><p><input type="radio" name="mode" id = "explore" value="Explore" checked = "checked"><bold>Explore Mode.</bold> Hover over the strings and frets to learn note names.</p></div> 
+	<div><p><input type="radio" name="mode" id = "quiz" value="Quiz" onClick = "choose_answer()"> <bold>Quiz Mode.</bold>  Choose the correct answer for the highlighted string and fret.</p></div> <br>
 	</form>
+	<canvas id="canvas" width="1850" height="1000" ></canvas>
+
 </body>
 </html>
