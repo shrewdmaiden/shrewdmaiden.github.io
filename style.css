@@ -1,0 +1,17 @@
+p  {
+	font-family: 'Roboto Condensed', sans-serif;
+	font-size: 20px;
+}
+
+bold {
+	font-weight: bold;
+}
+
+h1 {
+	font-family: 'Roboto Condensed', sans-serif;
+}
+div {
+	width: 200px;
+	float: left;
+	margin-right: 20px;
+}
