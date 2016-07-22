@@ -2,7 +2,7 @@
 var stage;
 var pic;
 var g;
-var strings = ["D1","A","E","C","G","D"];
+var strings = ["D","G","C","E","A","D1"];
 var string_lst = [];
 var fret_lst = [];
 var string_pos = {D1: [503,468,1811,427],
@@ -23,6 +23,7 @@ var fret_pos = {0: [504,454,504,568],
 						 
 var notes = [];
 var note_names = ["A","Bb","B","C","C#","D","D#/Eb","E","F","F#","G","G#/Ab"];
+var note_lst = ["D","D#","Eb","E","F","F#","G","G#","Ab","A","Bb","B","C","C#"]
 var button1;
 var button2;
 var button3;
@@ -32,14 +33,29 @@ var display_time;
 var display_note;
 var hotspots = [];
 var combos = [];
-var hotspot_pos = [[502,465],[570,462],[640,460],[710,458],[780,456],[850,454],[920,452],[990,450],
-				[502,477],[570,476],[640,475],[710,473],[780,471],[850,470],[920,469],[990,467],
-				[502,493],[570,492],[640,492],[710,491],[780,490],[850,489],[920,488],[990,488],
-				[502,511],[570,510],[640,511],[710,511],[780,511],[850,514],[920,514],[990,514],
-				[502,527],[570,528],[640,530],[710,530],[780,532],[850,533],[920,535],[990,537],
-				[502,545],[570,546],[640,548],[710,550],[780,551],[850,553],[920,555],[990,557]];
+var hotspot_pos = [[504,548],[574,549],[644,551],[714,553],[784,556],[854,556],[924,558],[994,560],
+				[504,530],[574,531],[644,533],[714,533],[784,535],[854,536],[924,538],[994,540],
+				[504,514],[574,514],[644,514],[714,514],[784,514],[854,517],[924,517],[994,517],
+				[504,496],[574,495],[644,495],[714,494],[784,496],[854,492],[924,491],[994,491],
+				[504,481],[574,480],[644,478],[714,476],[784,477],[854,473],[924,472],[994,470],
+				[504,466],[574,465],[644,463],[714,461],[784,459],[854,457],[924,455],[994,453]];
 
+var double_note = [false,true,false,false,false,false,true,false,
+					false,true,false,false,false,false,false,false,
+					false,false,false,true,false,false,false,false,
+					false,false,false,false,true,false,false,false,
+					false,false,false,false,false,false,true,false,
+					false,true,false,false,false,false,true,false,]
 
+var skip = [0,0,1,1,1,1,1,2,
+			-2,-2,-1,-1,-1,-1,-1,-1,
+			-4,-4,-4,-4,-3,-3,-3,-3,
+			-7,-7,-7,-7,-7,-6,-6,-6,
+			-9,-9,-9,-9,-9,-9,-9,-8,
+			-12,-12,-11,-11,-11,-11,-11,-10]
+
+var staff_notes = [];
+		
 		
 //This loop puts all of the string and fret combinations in an array along with their note name.
 for (string = 0; string < strings.length; string++) {
@@ -93,14 +109,16 @@ function shuffle(array) {
 //Hotspot Object
 (function() {
 
-function Hotspot(str,frt,x,y) {
+function Hotspot(str,frt,staff_note1,staff_note2, x,y) {
 	this.Container_constructor();
 	this.title = "Hotspot";
 	this.str = str;
 	this.frt = frt;
 	this.color = "red";
 	this.x = x;
-	this.y = y;
+	this.y= y;
+	this.staff_note1 = staff_note1;
+	this.staff_note2 = staff_note2;
 	this.note = notes[[this.str.str_name,this.frt.frt_name]];
 			
 	this.setup();
@@ -110,13 +128,13 @@ var p = createjs.extend(Hotspot, createjs.Container);
 
 p.setup = function() {
 
-	var width = 8;
-	var height = 8;
-	this.alpha = .04;
+	var width = 12;
+	var height = 12;
+	this.alpha = .01;
 		
 			
 	var background = new createjs.Shape();
-	background.graphics.beginFill(this.color).drawRect(0,0,width,height);
+	background.graphics.beginFill(this.color).drawRect(-width/2,-height/2,width,height);
 			
 	this.addChild(background); 
 	//this.on("click", this.handleClick);
@@ -152,6 +170,12 @@ p.setup = function() {
 p.handleRollOver = function(event) {       
 	this.str.alpha = event.type == "rollover" ? .4 : 1;
 	this.frt.alpha = event.type == "rollover" ? .4 : 1;
+	event.type == "rollover" ? this.staff_note1.children[2].graphics._fill.style = "red"  : this.staff_note1.children[2].graphics._fill.style = "black";
+	event.type == "rollover" ? this.staff_note1.children[3].graphics._stroke.style = "red"  : this.staff_note1.children[3].graphics._stroke.style = "black";
+	event.type == "rollover" ? this.staff_note1.children[4].graphics._stroke.style = "red"  : this.staff_note1.children[4].graphics._stroke.style = "black";
+	event.type == "rollover" ? this.staff_note2.children[2].graphics._fill.style = "red"  : this.staff_note2.children[2].graphics._fill.style = "black";
+	event.type == "rollover" ? this.staff_note2.children[3].graphics._stroke.style = "red"  : this.staff_note2.children[3].graphics._stroke.style = "black";
+	event.type == "rollover" ? this.staff_note2.children[4].graphics._stroke.style = "red"  : this.staff_note2.children[4].graphics._stroke.style = "black";
 	display_note.text = event.type == "rollover" ? this.note : "";
 };
 		
@@ -159,7 +183,99 @@ p.handleRollOver = function(event) {
 window.Hotspot = createjs.promote(Hotspot, "Container");
 }());
 		
-//Button Object
+//Note Object
+(function() {
+
+function Note(x,y,tail_up,tail_down,shrp,flt) {
+	this.Container_constructor();
+	this.title = "Note";
+	this.x = x;
+	this.y = y;
+	this.tail_up = tail_up;
+	this.tail_down = tail_down;
+	this.shrp = shrp;
+	this.flt = flt;
+	this.setup(this.tail_up,this.tail_down,this.shrp,this.flt);
+}
+var p = createjs.extend(Note, createjs.Container);
+
+
+p.setup = function(tu,td,sh,fl) {
+	var head = new createjs.Shape();
+	head.graphics.beginFill("black").drawEllipse(0,0,16,11);
+	var tailup = new createjs.Shape();
+	tailup.graphics.setStrokeStyle(2).beginStroke("black").moveTo(15,5.5).lineTo(15,-30);
+	var taildown = new createjs.Shape();
+	taildown.graphics.setStrokeStyle(2).beginStroke("black").moveTo(1,7).lineTo(1,35);
+	if (tu === false) {
+		tailup.alpha = .01;
+	}
+	
+	if (td === false) {
+		taildown.alpha = .01;
+	}
+	
+	var sharp = new createjs.Bitmap("sharp.png");
+	sharp.x = -15;
+	sharp.y = -11;
+	
+	if (sh === false) {
+		sharp.alpha = .01;
+	}
+	
+	var flat = new createjs.Bitmap("flat.png");
+	flat.x = -15;
+	flat.y = -15;
+	
+	if (fl === false) {
+		flat.alpha = .01;
+	}
+	
+	
+	this.addChild(sharp);
+	this.addChild(flat);
+	this.addChild(head);
+	this.addChild(tailup);
+	this.addChild(taildown);	
+	//this.on("click", this.handleClick);
+	this.on("rollover", this.handleRollOver);
+	this.on("rollout", this.handleRollOver);
+	this.cursor = "pointer";
+
+	this.mouseChildren = false;
+			
+	//this.offset = Math.random()*10;
+	this.count = 0;
+
+};
+
+/*p.handleClick = function (event) {
+	display_time = createjs.Ticker.getTime(true) + 1500;
+		
+	if (this.txt.text === answer_set[2]) {
+		response.text = "Correct";
+		choose_answer();
+	}
+	else {
+		button1.mouseEnabled = false;
+		button2.mouseEnabled = false;
+		button3.mouseEnabled = false;
+		button4.mouseEnabled = false;
+	    response.text = "The correct answer is " + answer_set[2] + ".";
+		setTimeout(choose_answer,1500);
+	
+	}
+};*/
+
+p.handleRollOver = function(event) {       
+	this.alpha = event.type == "rollover" ? 0.4 : 1;
+};
+		
+		
+window.Note = createjs.promote(Note, "Container");
+}());
+		
+//Button Object		
 (function() {
 
 function Button(label, color) {
@@ -373,16 +489,26 @@ function choose_answer() {
 		
 function init() {
 	stage = new createjs.Stage(document.getElementById("canvas"));
-	stage.enableMouseOver();	
+	stage.enableMouseOver();
+	
 	answer_set = pick_answer();
-
-		
+	staff = new createjs.Stage(document.getElementById("staff"));
 	pic = new createjs.Bitmap("Violbigside.png");
 	pic.regX = pic.image.width * 0.5;
 	pic.regY = 200;
 	
+	bass_pic = new createjs.Bitmap("bassClef.png");
+	bass_pic.x = 10;
+	bass_pic.y = 20;
+	
+	alto_pic = new createjs.Bitmap("altoclef.png");
+	alto_pic.x = 10;
+	alto_pic.y = 150;
+	
 	stage.addChild(pic);
-			
+	staff.addChild(bass_pic);
+	staff.addChild(alto_pic);
+
 	for (f = 0; f < 8; f++) {
 		x = fret_pos[frets[f]];
 		fret_lst[f] = new Fret(x[0],x[1],x[2],x[3],frets[f]);
@@ -397,13 +523,153 @@ function init() {
 
 	for (string = 0; string < string_lst.length; string++) {
 		for (fret = 0; fret < fret_lst.length; fret++) {
-			combos.push([string_lst[string],fret_lst[fret]]);
+			combos.push([string_lst[string],fret_lst[fret],notes[[strings[string],frets[fret]]]]);
 		}
 	}
+	
+	drawline(20,0,1375);
+	drawline(32,0,1375);
+	drawline(44,0,1375);
+	drawline(56,0,1375);
+	drawline(68,0,1375);
+	drawline(80,70,94);
+	drawline(80,120,144);
+	drawline(80,170,194);
+	drawline(80,220,244);
+	
+	drawline(150,0,1375);
+	drawline(162,0,1375);
+	drawline(174,0,1375);
+	drawline(186,0,1375);
+	drawline(198,0,1375);
+	
+	for (n = 0; n < 12; n++) {
+		x = n * 100 + 74;
+		y = -n * 6 + 80;
+		
+		if (n*2 < 14) {
+			note1 = note_lst[n*2];
+			note2 = note_lst[n*2+1];
+		}
+		else {
+			note1 = note_lst[n*2-14];
+			note2 = note_lst[n*2-13];
+		}
+		
+		if (y > 43) {
+			tu = true;
+			td = false;
+		}
+		else {
+			tu = false;
+			td = true;
+		}
+		
+		if (note1.substring(1,2) === "#") {
+			shrp1 = true;
+			flt1 = false;
+		}
+		else if (note1.substring(1,2) === "b"){
+			shrp1 = false;
+			flt1 = true;
+		}
+		else {
+			shrp1 = false;
+			flt1 = false;
+		}
+		
+		if (note2.substring(1,2) === "#") {
+			shrp2 = true;
+			flt2 = false;
+		}	
+		else if (note2.substring(1,2) === "b"){
+			shrp2 = false;
+			flt2 = true;
+		}
+		else {
+			shrp2 = false;
+			flt2 = false;
+		}
+		staff_notes.push(new Note(x,y,tu,td,shrp1,flt1));
+		staff_notes.push(new Note(x + 50,y,tu,td,shrp2,flt2));
+	}
+	
+	for (n = 0; n < 7; n++) {
+		x = n * 100 + 74;
+		y = -n * 6 + 174;
+		
+		if (n*2 < 4) {
+			note1 = note_lst[n*2+10];
+			note2 = note_lst[n*2+11];
+		}
+		else {
+			note1 = note_lst[n*2-4];
+			note2 = note_lst[n*2-3];
+		}
+		
+		if (y > 173) {
+			tu = true;
+			td = false;
+		}
+		else {
+			tu = false;
+			td = true;
+		}
+
+		if (note1.substring(1,2) === "#") {
+			shrp1 = true;
+			flt1 = false;
+		}
+		else if (note1.substring(1,2) === "b"){
+			shrp1 = false;
+			flt1 = true;
+		}
+		else {
+			shrp1 = false;
+			flt1 = false;
+		}
+		
+		if (note2.substring(1,2) === "#") {
+			shrp2 = true;
+			flt2 = false;
+		}	
+		else if (note2.substring(1,2) === "b"){
+			shrp2 = false;
+			flt2 = true;
+		}
+		else {
+			shrp2 = false;
+			flt2 = false;
+		}
+		staff_notes.push(new Note(x,y,tu,td,shrp1,flt1));
+		staff_notes.push(new Note(x + 50,y,tu,td,shrp2,flt2));
+	}
+	
+
+	
+	for (n = 0; n < staff_notes.length; n++) {
+		staff.addChild(staff_notes[n]);
+	}
+	
+
+	
+	
+	
+	
+	
+
 	for (h = 0; h < combos.length; h++) {
-		hotspots[h] = new Hotspot(combos[h][0],combos[h][1],hotspot_pos[h][0],hotspot_pos[h][1]);
+		if (double_note[h] === true){
+			hotspots[h] = new Hotspot(combos[h][0],combos[h][1],staff_notes[h + skip[h]],staff_notes[h + skip[h]+1],hotspot_pos[h][0],hotspot_pos[h][1]);
+		}
+		else {
+			hotspots[h] = new Hotspot(combos[h][0],combos[h][1],staff_notes[h + skip[h]],staff_notes[h + skip[h]],hotspot_pos[h][0],hotspot_pos[h][1]);
+		}
 		stage.addChild(hotspots[h]);
 	}
+	
+	
+	
 	
 	button1 = new Button(choices[0],"#E9D3AE");
 	button1.x = 510;
@@ -441,7 +707,17 @@ function init() {
 	createjs.Ticker.addEventListener("tick", tick);
 }
 		
-
+function drawline (starty,startx,endx) {
+	this.starty = starty;
+	g = new createjs.Graphics();
+	g.setStrokeStyle(2);
+	g.beginStroke("black");
+	g.moveTo(startx,this.starty);
+	g.lineTo(endx,this.starty);
+	var s  = new createjs.Shape(g);
+	staff.addChild(s);
+};
+	
 function tick() {
 
 	if(document.getElementById('quiz').checked) {
@@ -512,4 +788,5 @@ function tick() {
 	}
 			
 	stage.update();
+	staff.update();
 };
