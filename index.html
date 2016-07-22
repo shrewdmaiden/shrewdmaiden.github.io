@@ -8,11 +8,14 @@
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
 </head>
 <body onload="init();">
-	<h1>Learn Bass Viola da Gamba!</h1>
+	<div2><h1>Learn Bass Viola da Gamba!</h1> 
+	<br>
 	<form action="">
-	<div><p><input type="radio" name="mode" id = "explore" value="Explore" checked = "checked"><bold>Explore Mode.</bold> Hover over the strings and frets to learn note names.</p></div> 
+	<div><p><input type="radio" name="mode" id = "explore" value="Explore" checked = "checked"><bold>Explore Mode.</bold> Hover over the strings and frets to learn note names. The staff notes will change color.</p></div> 
 	<div><p><input type="radio" name="mode" id = "quiz" value="Quiz" onClick = "choose_answer()"> <bold>Quiz Mode.</bold>  Choose the correct answer for the highlighted string and fret.</p></div> <br>
 	</form>
+	</div2>
+	<canvas id="staff" width="1375" height="250"></canvas>
 	<canvas id="canvas" width="1850" height="1000" ></canvas>
 
 </body>
