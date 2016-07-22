@@ -9,9 +9,15 @@ bold {
 
 h1 {
 	font-family: 'Roboto Condensed', sans-serif;
+	
 }
 div {
 	width: 200px;
+	float: left;
+	margin-right: 20px;
+}
+div2 {
+	width: 450px;
 	float: left;
 	margin-right: 20px;
 }
